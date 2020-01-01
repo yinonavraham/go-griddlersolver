@@ -26,6 +26,7 @@ const (
 	boxMidConnectDown  = "\u2534"
 )
 
+// PrintGrid prints the provided grid to the provided writer as text
 func PrintGrid(w io.Writer, g grid.Grid) error {
 	cellSize := 2
 	if _, err := w.Write([]byte(boxCornerUpLeft)); err != nil {

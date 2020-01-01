@@ -2,20 +2,34 @@ package grid
 
 import "fmt"
 
+// CellValue type
 type CellValue float32
 
 const (
+	// ZeroCellValue is the zero value for a cell in the grid
 	ZeroCellValue CellValue = 0
 )
 
+// Grid is an interface which represents a grid
 type Grid interface {
+	// Number of rows in the grid
 	Rows() int
+	// Number of columns in the grid
 	Columns() int
+	// Get the value of a given cell at a given row and column
 	GetCell(row, column int) CellValue
 }
 
+// MutableGrid is an interface which represents a mutable grid - a Grid which can be modified
+//
+// Usually used with type assertion:
+//   g := ...
+//   if mg, ok := g.(grid.MutableGrid); ok {
+//     mg.SetCell(...)
+//   }
 type MutableGrid interface {
 	Grid
+	// Set tne value of a cell in the grid at a given row and column
 	SetCell(row, column int, value CellValue)
 }
 
@@ -29,7 +43,10 @@ type grid struct {
 	cells   [][]CellValue
 }
 
-func NewWithValues(values [][]CellValue) *grid {
+// NewWithValues creates a new grid with the provided values.
+// The grid size is determined by the number of rows in the provided values and the max row length is the number of columns.
+// If there are rows of different sizes, the undefined cells are initialized with the ZeroCellValue.
+func NewWithValues(values [][]CellValue) Grid {
 	rows := len(values)
 	columns := 0
 	if rows > 0 {
@@ -39,7 +56,7 @@ func NewWithValues(values [][]CellValue) *grid {
 			}
 		}
 	}
-	g := New(rows, columns)
+	g := New(rows, columns).(*grid)
 	for r := 0; r < rows; r++ {
 		for c := 0; c < len(values[r]); c++ {
 			g.SetCell(r, c, values[r][c])
@@ -48,7 +65,8 @@ func NewWithValues(values [][]CellValue) *grid {
 	return g
 }
 
-func New(rows, columns int) *grid {
+// New creates a new grid with the provided size (number of rows and columns)
+func New(rows, columns int) Grid {
 	g := grid{
 		rows:    rows,
 		columns: columns,
