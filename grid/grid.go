@@ -2,14 +2,6 @@ package grid
 
 import "fmt"
 
-// CellValue type
-type CellValue float32
-
-const (
-	// ZeroCellValue is the zero value for a cell in the grid
-	ZeroCellValue CellValue = 0
-)
-
 // Grid is an interface which represents a grid
 type Grid interface {
 	// Number of rows in the grid
@@ -18,6 +10,8 @@ type Grid interface {
 	Columns() int
 	// Get the value of a given cell at a given row and column
 	GetCell(row, column int) CellValue
+	// Clone the grid
+	Clone() Grid
 }
 
 // MutableGrid is an interface which represents a mutable grid - a Grid which can be modified
@@ -72,8 +66,11 @@ func New(rows, columns int) Grid {
 		columns: columns,
 	}
 	g.cells = make([][]CellValue, g.rows)
-	for i := 0; i < g.rows; i++ {
-		g.cells[i] = make([]CellValue, g.columns)
+	for r := 0; r < g.rows; r++ {
+		g.cells[r] = make([]CellValue, g.columns)
+		for c := 0; c < g.columns; c++ {
+			g.cells[r][c] = ZeroCellValue
+		}
 	}
 	return &g
 }
@@ -102,4 +99,19 @@ func (g *grid) assertCoordinates(row int, col int) {
 	if col < 0 || col >= g.columns {
 		panic(fmt.Errorf("column out of range: %d [0..%d)", col, g.columns))
 	}
+}
+
+func (g *grid) Clone() Grid {
+	clone := grid{
+		rows:    g.rows,
+		columns: g.columns,
+	}
+	clone.cells = make([][]CellValue, g.rows)
+	for r := 0; r < g.rows; r++ {
+		clone.cells[r] = make([]CellValue, g.columns)
+		for c := 0; c < g.columns; c++ {
+			clone.cells[r][c] = g.cells[r][c]
+		}
+	}
+	return &clone
 }

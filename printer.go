@@ -46,15 +46,15 @@ func PrintGrid(w io.Writer, g grid.Grid) error {
 			value := g.GetCell(r, c)
 			var char string
 			switch {
-			case value == 0:
+			case value.Value() <= 0:
 				char = " "
-			case value < 0.33:
+			case value.Value() < 0.33:
 				char = blockShadeLight
-			case value < 0.66:
+			case value.Value() < 0.66:
 				char = blockShadeMedium
-			case value < 1:
+			case value.Value() < 1:
 				char = blockShadeDark
-			case value >= 1:
+			case value.Value() >= 1:
 				char = blockFull
 			}
 			if _, err := w.Write([]byte(strings.Repeat(char, cellSize))); err != nil {

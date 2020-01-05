@@ -24,8 +24,8 @@ func TestPrintGrid(t *testing.T) {
 		{
 			name: "with values",
 			values: [][]grid.CellValue{
-				{0, 0.2, 0.4, 0.6, 0.8, 1},
-				{0.1, 0.3, 0.5, 0.7, 0.9, 0},
+				{cellValue(0), cellValue(0.2), cellValue(0.4), cellValue(0.6), cellValue(0.8), cellValue(1)},
+				{cellValue(0.1), cellValue(0.3), cellValue(0.5), cellValue(0.7), cellValue(0.9), cellValue(0)},
 			},
 			want: `
 ┌────────────┐
@@ -44,4 +44,10 @@ func TestPrintGrid(t *testing.T) {
 			assert.Equal(t, tt.want, w.String())
 		})
 	}
+}
+
+type cellValue float32
+
+func (v cellValue) Value() float32 {
+	return float32(v)
 }
